@@ -1,0 +1,64 @@
+# Mimamori .gitignore
+
+# System files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Local configuration
+system/config_local.php
+system/config_production.php
+.env
+
+# Database dumps (mit sensiblen Daten)
+*.sql
+!system/db_schema.sql
+!system/db_initial_data.sql
+
+# Debug und Test files
+debug_*.php
+test_*.php
+fix_*.php
+setup_local.php
+
+# Logs
+*.log
+error_log
+access_log
+
+# Temp files
+*.tmp
+*.temp
+*.cache
+
+# Backup files
+*.bak
+*.backup
+*_backup.*
+
+# User uploaded content (falls später implementiert)
+uploads/
+user_content/
+
+# Dependencies (falls später hinzugefügt)
+vendor/
+node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# Documentation build
+docs/_build/
+
+# Infomaniak specific
+.user.ini
+*.pid

@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Entferne /mimamori/ aus URLs wenn auf Subdomain
+RewriteCond %{HTTP_HOST} ^mimamori\. [NC]
+RewriteRule ^mimamori/(.*)$ /$1 [R=301,L]
+
+# Alternative: Direkte Weiterleitung
+RedirectMatch 301 ^/mimamori/(.*)$ /$1

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neu registrieren – Mimamori</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Neu registrieren</h1>
+
+    <form id="registerForm" class="form">
+      <div class="form-group">
+        <label for="email">E-Mail-Adresse</label>
+        <input type="email" id="email" required autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label for="password">Passwort</label>
+        <input type="password" id="password" required autocomplete="new-password" />
+      </div>
+      <button type="submit" class="btn btn-primary">Registrieren</button>
+    </form>
+
+    <p class="info-text">
+      Bereits registriert? <a href="login.html">Hier anmelden</a>.
+    </p>
+  </div>
+
+  <script src="js/register.js"></script>
+</body>
+</html>
