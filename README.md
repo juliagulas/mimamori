@@ -167,4 +167,4 @@ Dieses Projekt ist für Bildungszwecke erstellt. Alle Rechte vorbehalten.
 
 ## 👩‍💻 Entwickelt von
 
-Entwickelt mit ❤️ für Julia
+Entwickelt von Julia mit ❤️
