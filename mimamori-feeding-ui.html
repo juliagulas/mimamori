@@ -354,22 +354,24 @@
             border-radius: 50%;
         }
 
-        /* Weinender Mund - Variante 2: Gefüllter Halbkreis */
-        .mini-mouth.sad {
+        /* Trauriger Mund - umgekehrter Halbkreis NUR für Mini Icons */
+        .mini-mimamori .mini-mouth.sad {
             width: 10px;
             height: 5px;
             background-color: #E57373;
             border-radius: 0 0 10px 10px;
             margin: 2px auto 0;
+            transform: rotate(180deg);
         }
 
-        /* Lachender Mund - Variante 2: Gefüllter Halbkreis */
-        .mini-mouth.happy {
+        /* Glücklicher Mund - normaler Halbkreis NUR für Mini Icons */
+        .mini-mimamori .mini-mouth.happy {
             width: 10px;
             height: 5px;
             background-color: #E57373;
-            border-radius: 10px 10px 0 0;
+            border-radius: 0 0 10px 10px;
             margin: 2px auto 0;
+            transform: none;
         }
 
         /* Spezielle Mundfarbe für Bodo */
@@ -1107,6 +1109,18 @@
                 updateCharacterType(typeName);
             }
             
+            // Sicherstellen, dass die Mini-Icons ihre korrekten Münder behalten
+            const leftMouth = document.querySelector('#sadIcon .mini-mouth');
+            const rightMouth = document.querySelector('#happyIcon .mini-mouth');
+            if (leftMouth) {
+                leftMouth.classList.remove('happy', 'neutral');
+                leftMouth.classList.add('sad');
+            }
+            if (rightMouth) {
+                rightMouth.classList.remove('sad', 'neutral');
+                rightMouth.classList.add('happy');
+            }
+            
             // Füttern-Button deaktivieren wenn Zufriedenheit max (10)
             const feedButton = document.getElementById('feedButton');
             if (currentMimamori.happiness_level >= 10) {
@@ -1121,17 +1135,29 @@
         // Character-Typ aktualisieren
         function updateCharacterType(name) {
             const character = document.getElementById('mimamoriCharacter');
-            const sadIcon = document.getElementById('sadIcon');
-            const happyIcon = document.getElementById('happyIcon');
+            const leftIcon = document.getElementById('sadIcon');
+            const rightIcon = document.getElementById('happyIcon');
             
             // Klassen aktualisieren
             character.classList.remove('leni', 'alva', 'bodo', 'thor');
             character.classList.add(name);
             
-            sadIcon.classList.remove('leni', 'alva', 'bodo', 'thor');
-            happyIcon.classList.remove('leni', 'alva', 'bodo', 'thor');
-            sadIcon.classList.add(name);
-            happyIcon.classList.add(name);
+            leftIcon.classList.remove('leni', 'alva', 'bodo', 'thor');
+            rightIcon.classList.remove('leni', 'alva', 'bodo', 'thor');
+            leftIcon.classList.add(name);
+            rightIcon.classList.add(name);
+            
+            // Sicherstellen, dass die Mund-Klassen korrekt bleiben
+            const leftMouth = leftIcon.querySelector('.mini-mouth');
+            const rightMouth = rightIcon.querySelector('.mini-mouth');
+            if (leftMouth) {
+                leftMouth.classList.remove('happy', 'neutral');
+                leftMouth.classList.add('sad');
+            }
+            if (rightMouth) {
+                rightMouth.classList.remove('sad', 'neutral');
+                rightMouth.classList.add('happy');
+            }
             
             // Titel aktualisieren
             const title = document.getElementById('mimamoriTitle');
