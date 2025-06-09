@@ -3,94 +3,540 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mimamori Füttern</title>
+    <title>Mimamori - Seniorenfreundlich</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Basic Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        @keyframes shimmer {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 0%; }
+        }
+
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', sans-serif;
             font-size: 18px;
-            line-height: 1.6;
-            background-color: #f7f9fc;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+        .game-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* Desktop specific */
+        @media (min-width: 768px) {
+            .game-card {
+                max-width: 800px;
+                padding: 40px;
+            }
         }
 
-        /* Header Styles */
-        header {
+        /* Logout Button */
+        .logout-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .logout-button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+        }
+
+        @media (min-width: 768px) {
+            .logout-button {
+                top: 20px;
+                left: 20px;
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+        }
+
+        /* Burger Menu */
+        .burger-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .burger-button {
+            width: 40px;
+            height: 40px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .burger-line {
+            width: 100%;
+            height: 3px;
+            background: #333;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .burger-button.active .burger-line:nth-child(1) {
+            transform: rotate(45deg) translateY(7px);
+        }
+
+        .burger-button.active .burger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger-button.active .burger-line:nth-child(3) {
+            transform: rotate(-45deg) translateY(-7px);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            min-width: 200px;
+            display: none;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 15px;
+            background: #f0f0f0;
+            font-weight: 700;
+            font-size: 16px;
             text-align: center;
-            margin-bottom: 30px;
+        }
+
+        .mimamori-option {
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 18px;
+            font-weight: 500;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid #eee;
+        }
+
+        .mimamori-option:last-child {
+            border-bottom: none;
+        }
+
+        .mimamori-option:hover {
+            background: #f8f8f8;
+        }
+
+        .mimamori-option.selected {
+            background: #e8f0ff;
+        }
+
+        .color-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        /* Mimamori Farben wie im Screenshot */
+        .color-leni { background-color: #DDA0A6; }
+        .color-alva { background-color: #F5C99B; }
+        .color-bodo { background-color: #C8919D; }
+        .color-thor { background-color: #B8926A; }
+
+        /* Header */
+        .game-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 0 50px; /* Platz für beide Buttons */
         }
 
         h1 {
-            font-size: 36px;
+            font-size: 28px;
             color: #2c3e50;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 36px;
+                margin-bottom: 20px;
+            }
         }
 
-        /* Status Bar */
-        .status-bar {
+        .happiness-container {
             display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding-bottom: 10px;
         }
 
-        .happiness-meter {
+        .happiness-icon {
+            width: 25px;
+            height: 25px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* Mini Mimamori für Icons */
+        .mini-mimamori {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Mini Leni */
+        .mini-mimamori.leni {
+            background-color: #DDA0A6;
+            border-radius: 5px 5px 8px 8px;
+        }
+
+        .mini-mimamori.leni::before,
+        .mini-mimamori.leni::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #DDA0A6;
+            border-radius: 50%;
+            top: -4px;
+        }
+
+        .mini-mimamori.leni::before {
+            left: 3px;
+        }
+
+        .mini-mimamori.leni::after {
+            right: 3px;
+        }
+
+        /* Mini Alva */
+        .mini-mimamori.alva {
+            background-color: #F5C99B;
+            border-radius: 5px 5px 8px 8px;
+        }
+
+        .mini-mimamori.alva::before,
+        .mini-mimamori.alva::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 10px;
+            background-color: #F5C99B;
+            border-radius: 3px;
+            top: -7px;
+        }
+
+        .mini-mimamori.alva::before {
+            left: 5px;
+        }
+
+        .mini-mimamori.alva::after {
+            right: 5px;
+        }
+
+        /* Mini Bodo */
+        .mini-mimamori.bodo {
+            background-color: #C8919D;
+            border-radius: 5px 5px 8px 8px;
+        }
+
+        .mini-mimamori.bodo::before,
+        .mini-mimamori.bodo::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            top: -6px;
+        }
+
+        .mini-mimamori.bodo::before {
+            border-width: 0 4px 8px 4px;
+            border-color: transparent transparent #C8919D transparent;
+            left: 3px;
+        }
+
+        .mini-mimamori.bodo::after {
+            border-width: 0 4px 8px 4px;
+            border-color: transparent transparent #C8919D transparent;
+            right: 3px;
+        }
+
+        /* Mini Thor */
+        .mini-mimamori.thor {
+            background-color: #B8926A;
+            border-radius: 5px 5px 8px 8px;
+        }
+
+        .mini-mimamori.thor::before,
+        .mini-mimamori.thor::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #B8926A;
+            border-radius: 50%;
+            top: -3px;
+        }
+
+        .mini-mimamori.thor::before {
+            left: 2px;
+        }
+
+        .mini-mimamori.thor::after {
+            right: 2px;
+        }
+
+        /* Mini Gesichter */
+        .mini-face {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 100%;
         }
 
-        label {
-            font-size: 22px;
-            display: block;
-            margin-bottom: 8px;
+        .mini-eyes {
+            display: flex;
+            justify-content: center;
+            gap: 3px;
         }
 
-        .meter {
-            height: 30px;
-            background-color: #ecf0f1;
-            border-radius: 15px;
+        .mini-eye {
+            width: 4px;
+            height: 4px;
+            background-color: #333;
+            border-radius: 50%;
+        }
+
+        /* Weinender Mund - Variante 2: Gefüllter Halbkreis */
+        .mini-mouth.sad {
+            width: 10px;
+            height: 5px;
+            background-color: #E57373;
+            border-radius: 0 0 10px 10px;
+            margin: 2px auto 0;
+        }
+
+        /* Lachender Mund - Variante 2: Gefüllter Halbkreis */
+        .mini-mouth.happy {
+            width: 10px;
+            height: 5px;
+            background-color: #E57373;
+            border-radius: 10px 10px 0 0;
+            margin: 2px auto 0;
+        }
+
+        /* Spezielle Mundfarbe für Bodo */
+        .mini-mimamori.bodo .mini-mouth.sad,
+        .mini-mimamori.bodo .mini-mouth.happy {
+            background-color: #F8BBD0;
+        }
+
+        /* Spezielle Mundfarbe für Thor */
+        .mini-mimamori.thor .mini-mouth.sad,
+        .mini-mimamori.thor .mini-mouth.happy {
+            background-color: #FF8A65;
+        }
+
+        .happiness-bar {
+            background: #f0f0f0;
+            height: 12px;
+            border-radius: 6px;
             overflow: hidden;
-            border: 2px solid #bdc3c7;
+            flex: 1;
+            max-width: 250px;
+        }
+        
+        @media (min-width: 768px) {
+            .happiness-bar {
+                height: 20px;
+                border-radius: 10px;
+                max-width: 400px;
+            }
         }
 
-        .meter-fill {
+        .happiness-fill {
             height: 100%;
-            width: 30%; /* Initial value */
-            background-color: #3498db;
-            transition: width 0.5s ease;
+            width: 30%;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #1dd1a1);
+            background-size: 400% 100%;
+            animation: shimmer 3s ease infinite;
         }
 
-        #happiness-level {
-            background-color: #2ecc71;
-            width: 20%; /* Initial value */
-        }
-
-        /* Character Container */
-        .character-container {
+        /* Character Section */
+        .character-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
             text-align: center;
-            margin: 30px 0;
             position: relative;
-            height: 300px;
         }
 
         .character {
-            width: 250px;
-            height: 250px;
+            width: 150px;
+            height: 180px;
             margin: 0 auto;
-            background-color: #ffb6c1; /* Default color - will be overridden */
-            border-radius: 50%;
+            background-color: #7C9A5B;
             position: relative;
-            overflow: hidden;
+            transition: all 0.3s ease;
+            border-radius: 20px 20px 30px 30px;
+        }
+        
+        @media (min-width: 768px) {
+            .character {
+                width: 220px;
+                height: 260px;
+            }
+        }
+
+        /* Leni - Rosa mit runden Ohren */
+        .character.leni {
+            background-color: #DDA0A6;
+        }
+
+        .character.leni::before,
+        .character.leni::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: #DDA0A6;
+            border-radius: 50%;
+            top: -20px;
+        }
+
+        .character.leni::before {
+            left: 30px;
+        }
+
+        .character.leni::after {
+            right: 30px;
+        }
+
+        /* Alva - Orange mit Hasenohren */
+        .character.alva {
+            background-color: #F5C99B;
+        }
+
+        .character.alva::before,
+        .character.alva::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 50px;
+            background-color: #F5C99B;
+            border-radius: 12px;
+            top: -35px;
+        }
+
+        .character.alva::before {
+            left: 40px;
+        }
+
+        .character.alva::after {
+            right: 40px;
+        }
+
+        /* Bodo - Rosa/Braun mit spitzen Ohren */
+        .character.bodo {
+            background-color: #C8919D;
+        }
+
+        .character.bodo::before,
+        .character.bodo::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            top: -30px;
+        }
+
+        .character.bodo::before {
+            border-width: 0 20px 40px 20px;
+            border-color: transparent transparent #C8919D transparent;
+            left: 25px;
+        }
+
+        .character.bodo::after {
+            border-width: 0 20px 40px 20px;
+            border-color: transparent transparent #C8919D transparent;
+            right: 25px;
+        }
+
+        /* Thor - Braun mit runden Ohren */
+        .character.thor {
+            background-color: #B8926A;
+        }
+
+        .character.thor::before,
+        .character.thor::after {
+            content: '';
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            background-color: #B8926A;
+            border-radius: 50%;
+            top: -15px;
+        }
+
+        .character.thor::before {
+            left: 20px;
+        }
+
+        .character.thor::after {
+            right: 20px;
+        }
+
+        .character:hover {
+            transform: scale(1.05);
         }
 
         .face {
@@ -98,230 +544,238 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 200px;
-            height: 100px;
         }
 
         .eyes {
             display: flex;
             justify-content: space-between;
-            width: 120px;
+            width: 80px;
             margin: 0 auto;
+        }
+        
+        @media (min-width: 768px) {
+            .eyes {
+                width: 120px;
+            }
+        }
+
+        /* Augen-Stile basierend auf Screenshot */
+        .character.leni .eye {
+            width: 35px;
+            height: 35px;
+            background-color: #B3D9F2;
+            border-radius: 50%;
+        }
+
+        .character.alva .eye {
+            width: 25px;
+            height: 35px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        .character.bodo .eye {
+            width: 30px;
+            height: 30px;
+            background-color: #333;
+            border-radius: 50%;
+        }
+
+        .character.thor .eye {
+            width: 35px;
+            height: 35px;
+            background-color: #5A7A5A;
+            border-radius: 50%;
+        }
+
+        .character.leni .pupil,
+        .character.alva .pupil,
+        .character.bodo .pupil,
+        .character.thor .pupil {
+            display: none;
         }
 
         .eye {
-            width: 40px;
-            height: 40px;
+            width: 24px;
+            height: 24px;
             background-color: white;
             border-radius: 50%;
             position: relative;
         }
 
         .pupil {
-            width: 20px;
-            height: 20px;
+            width: 12px;
+            height: 12px;
             background-color: black;
             border-radius: 50%;
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 5px;
+            left: 5px;
         }
 
         .mouth {
-            width: 80px;
-            height: 40px;
-            margin: 10px auto 0;
-            background-color: #333;
-            border-radius: 0 0 40px 40px;
-            /* For sad mouth initially */
-            transform: rotate(180deg);
-        }
-
-        /* Type Select */
-        .type-select {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .type-select h2 {
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-
-        .type-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .type-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 20px;
-            border: 2px solid transparent;
-            cursor: pointer;
+            width: 70px;
+            height: 20px;
+            margin: 15px auto 0;
+            background-color: #E57373;
+            border-radius: 0 0 35px 35px;
             transition: all 0.3s ease;
         }
-
-        .type-button.selected {
-            border-color: #333;
-            font-weight: bold;
+        
+        @media (min-width: 768px) {
+            .mouth {
+                width: 90px;
+                height: 25px;
+            }
         }
 
-        /* Type specific colors */
-        .type-button.rosa {
-            background-color: #ff9a8b;
-            color: white;
+        /* Traurig/Hungrig Mund */
+        .mouth.sad {
+            height: 18px;
+            border-radius: 35px 35px 0 0;
+            transform: rotate(180deg);
+            margin-top: 25px;
         }
 
-        .type-button.blau {
-            background-color: #8bb5ff;
-            color: white;
+        /* Neutral Mund */
+        .mouth.neutral {
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
         }
 
-        .type-button.grün {
-            background-color: #9aff8b;
-            color: #333;
+        /* Glücklich Mund */
+        .mouth.happy {
+            height: 25px;
+            border-radius: 0 0 35px 35px;
         }
 
-        .type-button.lila {
-            background-color: #c38bff;
-            color: white;
+        /* Mund-Farben für verschiedene Charaktere */
+        .character.leni .mouth {
+            background-color: #D2691E;
         }
 
-        /* Food Options */
-        .food-options {
+        .character.alva .mouth {
+            background-color: #E57373;
+        }
+
+        .character.bodo .mouth {
+            background-color: #F8BBD0;
+        }
+
+        .character.thor .mouth {
+            background-color: #E57373;
+        }
+
+        /* Food and Action Section */
+        .action-section {
             display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .food-item {
-            cursor: pointer;
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
-        }
-
-        .food-item:hover {
-            transform: scale(1.1);
-        }
-
-        .food-item.selected {
-            border: 3px solid #3498db;
-        }
-
-        .food-item-inner {
-            width: 80px;
-            height: 80px;
-            display: flex;
+            gap: 15px;
             align-items: center;
             justify-content: center;
         }
 
-        .apple {
-            width: 60px;
-            height: 60px;
-            background-color: #e74c3c;
-            border-radius: 50%;
-            position: relative;
+        .food-row {
+            display: flex;
+            gap: 10px;
         }
 
-        .apple::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 25px;
-            width: 10px;
-            height: 20px;
-            background-color: #27ae60;
-            border-radius: 5px;
+        .food-badge {
+            width: 70px;
+            height: 70px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 3px solid transparent;
+        }
+        
+        @media (min-width: 768px) {
+            .food-badge {
+                width: 100px;
+                height: 100px;
+                font-size: 50px;
+            }
         }
 
-        .banana {
-            width: 20px;
-            height: 60px;
-            background-color: #f1c40f;
-            border-radius: 20px;
-            transform: rotate(-20deg);
+        .food-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
-        .cookie {
-            width: 60px;
-            height: 60px;
-            background-color: #cd853f;
-            border-radius: 50%;
-            position: relative;
+        .food-badge.selected {
+            border-color: #667eea;
+            background: #f3f0ff;
         }
 
-        .cookie::after {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            width: 10px;
-            height: 10px;
-            background-color: #3e2723;
-            border-radius: 50%;
-            box-shadow: 
-                20px 5px 0 #3e2723,
-                5px 25px 0 #3e2723;
-        }
-
-        /* Controls */
-        .controls {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .large-button {
-            padding: 15px 40px;
-            font-size: 24px;
-            background-color: #e74c3c;
+        .feed-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 10px;
+            padding: 16px 32px;
+            border-radius: 30px;
+            font-size: 20px;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        @media (min-width: 768px) {
+            .feed-btn {
+                padding: 20px 50px;
+                font-size: 26px;
+                border-radius: 35px;
+            }
         }
 
-        .large-button:hover {
-            background-color: #c0392b;
+        .feed-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
         }
 
-        /* Status indicator */
-        .status-indicator {
-            text-align: center;
-            margin-top: 20px;
-            font-weight: bold;
-            color: #666;
+        .feed-btn:active {
+            transform: translateY(0);
         }
 
-        /* Loading indicator */
+        .feed-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #999999 0%, #666666 100%);
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .feed-btn:disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Success animation */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: scale(1);}
+            40% {transform: scale(1.3);}
+            60% {transform: scale(1.15);}
+        }
+
+        .character.feeding {
+            animation: bounce 0.6s;
+        }
+
+        /* Loading */
         .loading {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255,255,255,0.8);
-            z-index: 99;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            margin-left: 10px;
         }
 
         @keyframes spin {
@@ -329,435 +783,390 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Footer */
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #7f8c8d;
-        }
-
-        /* Animation for feeding */
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-            40% {transform: translateY(-30px);}
-            60% {transform: translateY(-15px);}
-        }
-
-        .bounce {
-            animation: bounce 1s;
-        }
-
-        /* Modal for feedback */
-        .modal {
-            display: none;
+        /* Status message */
+        .status-message {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
         }
 
-        .modal-content {
-            background-color: #fff;
-            margin: 15% auto;
-            padding: 20px;
-            width: 70%;
-            border-radius: 10px;
-            text-align: center;
+        .status-message.show {
+            display: block;
+            animation: slideIn 0.3s ease;
         }
 
-        .modal h2 {
-            color: #27ae60;
-            margin-bottom: 20px;
+        @keyframes slideIn {
+            from {
+                transform: translateX(-50%) translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 400px) {
+            .game-card {
+                padding: 15px;
+                max-height: 95vh;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .burger-button {
+                width: 35px;
+                height: 35px;
+            }
+
+            .character {
+                width: 100px;
+                height: 100px;
+            }
+
+            .eyes {
+                width: 50px;
+            }
+
+            .eye {
+                width: 20px;
+                height: 20px;
+            }
+
+            .pupil {
+                width: 10px;
+                height: 10px;
+                top: 4px;
+                left: 4px;
+            }
+
+            .mouth {
+                width: 35px;
+                height: 18px;
+            }
+
+            .food-badge {
+                width: 50px;
+                height: 50px;
+                font-size: 26px;
+            }
+
+            .feed-btn {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+
+            .mimamori-option {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+
+            .color-circle {
+                width: 25px;
+                height: 25px;
+            }
+        }
+
+        /* Landscape mode for mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                align-items: flex-start;
+                padding-top: 10px;
+            }
+
+            .game-card {
+                max-height: none;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto 1fr auto;
+                gap: 10px;
+                max-width: 600px;
+            }
+
+            .game-header {
+                grid-column: 1 / -1;
+                margin-bottom: 0;
+            }
+
+            .burger-menu {
+                top: 10px;
+                right: 10px;
+            }
+
+            h1 {
+                font-size: 20px;
+                margin-bottom: 5px;
+            }
+
+            .character-section {
+                margin-bottom: 0;
+            }
+
+            .action-section {
+                grid-column: 1 / -1;
+            }
+
+            .character {
+                width: 80px;
+                height: 80px;
+            }
+
+            .eyes { width: 40px; }
+            .eye { width: 15px; height: 15px; }
+            .pupil { width: 8px; height: 8px; top: 3px; left: 3px; }
+            .mouth { width: 30px; height: 15px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Mimamori Füttern</h1>
-            <div class="status-bar">
-                <div class="happiness-meter">
-                    <label>Zufriedenheit:</label>
-                    <div class="meter">
-                        <div class="meter-fill" id="happiness-level"></div>
-                    </div>
-                </div>
-            </div>
-        </header>
-        
-        <main>
-            <div class="type-select">
-                <h2>Wähle deinen Mimamori-Typ</h2>
-                <div class="type-buttons" id="type-buttons">
-                    <!-- Typen werden per JavaScript eingefügt -->
-                </div>
-            </div>
-            
-            <div class="character-container">
-                <div class="character" id="mimamori-character">
-                    <div class="face">
-                        <div class="eyes">
-                            <div class="eye"><div class="pupil"></div></div>
-                            <div class="eye"><div class="pupil"></div></div>
-                        </div>
-                        <div class="mouth" id="mimamori-mouth"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="food-options" id="food-options">
-                <!-- Nahrungsoptionen werden per JavaScript eingefügt -->
-            </div>
-            
-            <div class="controls">
-                <button id="feed-button" class="large-button">Füttern</button>
-            </div>
-            
-            <div class="status-indicator" id="status-indicator">
-                <!-- Status wird hier angezeigt -->
-            </div>
-        </main>
-        
-        <footer>
-            <p>© 2025 Mimamori Projekt</p>
-        </footer>
-    </div>
+    <div class="game-card">
+        <!-- Logout Button -->
+        <button class="logout-button" onclick="logout()">Abmelden</button>
 
-    <!-- Success Modal -->
-    <div id="success-modal" class="modal">
-        <div class="modal-content">
-            <h2>Sehr gut!</h2>
-            <p>Mimamori ist jetzt glücklich!</p>
-            <button class="large-button" onclick="document.getElementById('success-modal').style.display = 'none';">Schließen</button>
+        <!-- Burger Menu -->
+        <div class="burger-menu">
+            <button class="burger-button" onclick="toggleMenu()">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </button>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <div class="dropdown-header">Wähle dein Mimamori</div>
+                <div class="mimamori-option" onclick="selectMimamori('leni', 1)">
+                    <div class="color-circle color-leni"></div>
+                    <span>Leni</span>
+                </div>
+                <div class="mimamori-option" onclick="selectMimamori('alva', 2)">
+                    <div class="color-circle color-alva"></div>
+                    <span>Alva</span>
+                </div>
+                <div class="mimamori-option" onclick="selectMimamori('bodo', 3)">
+                    <div class="color-circle color-bodo"></div>
+                    <span>Bodo</span>
+                </div>
+                <div class="mimamori-option selected" onclick="selectMimamori('thor', 4)">
+                    <div class="color-circle color-thor"></div>
+                    <span>Thor</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-header">
+            <h1 id="mimamoriTitle">Thor Füttern</h1>
+            <div class="happiness-container">
+                <div class="happiness-icon">
+                    <div class="mini-mimamori thor" id="sadIcon">
+                        <div class="mini-face">
+                            <div class="mini-eyes">
+                                <div class="mini-eye"></div>
+                                <div class="mini-eye"></div>
+                            </div>
+                            <div class="mini-mouth sad"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="happiness-bar">
+                    <div class="happiness-fill" id="happinessFill" style="width: 30%"></div>
+                </div>
+                <div class="happiness-icon">
+                    <div class="mini-mimamori thor" id="happyIcon">
+                        <div class="mini-face">
+                            <div class="mini-eyes">
+                                <div class="mini-eye"></div>
+                                <div class="mini-eye"></div>
+                            </div>
+                            <div class="mini-mouth happy"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="character-section">
+            <div class="character thor" id="mimamoriCharacter">
+                <div class="face">
+                    <div class="eyes">
+                        <div class="eye"><div class="pupil"></div></div>
+                        <div class="eye"><div class="pupil"></div></div>
+                    </div>
+                    <div class="mouth" id="mimamoriMouth"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-section">
+            <div class="food-row">
+                <div class="food-badge" data-food-id="1" onclick="selectFood(this)">🍎</div>
+                <div class="food-badge" data-food-id="2" onclick="selectFood(this)">🍌</div>
+                <div class="food-badge" data-food-id="3" onclick="selectFood(this)">🍪</div>
+            </div>
+            <button class="feed-btn" id="feedButton" onclick="feedMimamori()">Füttern</button>
         </div>
     </div>
 
-    <!-- Loading Indicator -->
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-    </div>
+    <!-- Status Message -->
+    <div class="status-message" id="statusMessage"></div>
 
     <script src="js/js-config.js"></script>
     <script>
-        // Basis-URL wird aus js-config.js übernommen
-        // const BASE_URL ist bereits definiert
-        
-        // Session-Check direkt hier
-        async function checkAuthAndInit() {
-            try {
-                const response = await fetch(`${BASE_URL}/api/protected.php`, {
-                    method: "GET",
-                    credentials: "include"
-                });
-
-                if (!response.ok || response.status === 401) {
-                    console.log("Not authenticated, redirecting...");
-                    window.location.href = `${BASE_URL}/login.html`;
-                    return;
-                }
-
-                const result = await response.json();
-                if (result.status !== "success") {
-                    window.location.href = `${BASE_URL}/login.html`;
-                    return;
-                }
-
-                console.log("Session valid, initializing app...");
-                // App initialisieren
-                initializePage();
-                
-            } catch (error) {
-                console.error("Auth check failed:", error);
-                // Bei Fehler trotzdem versuchen zu initialisieren
-                initializePage();
-            }
-        }
-        
-        // DOM-Elemente
-        const happinessLevel = document.getElementById('happiness-level');
-        const feedButton = document.getElementById('feed-button');
-        const foodOptions = document.getElementById('food-options');
-        const typeButtons = document.getElementById('type-buttons');
-        const character = document.getElementById('mimamori-character');
-        const mouth = document.getElementById('mimamori-mouth');
-        const modal = document.getElementById('success-modal');
-        const loading = document.getElementById('loading');
-        const statusIndicator = document.getElementById('status-indicator');
-
         // Globale Variablen
         let currentMimamori = null;
-        let selectedFood = null;
-        let foodItems = [];
-        let mimamoriTypes = [];
-        let updateInterval = null;
+        let selectedFoodElement = null;
+        let selectedFoodId = null;
+        let isLoading = false;
+        
+        // Mimamori-Typ Mapping (Name zu ID)
+        const mimamoriTypes = {
+            'leni': 1,
+            'alva': 2,
+            'bodo': 3,
+            'thor': 4
+        };
 
-        // Seite initialisieren
-        document.addEventListener('DOMContentLoaded', checkAuthAndInit);
-
-        async function initializePage() {
+        // Session Check und Init
+        async function init() {
             try {
-                showLoading();
+                // Session prüfen
+                const authResponse = await fetch(`${BASE_URL}/api/protected.php`, {
+                    credentials: 'include'
+                });
                 
-                // Mimamori-Daten abrufen
-                await fetchMimamoriData();
+                if (!authResponse.ok) {
+                    window.location.href = `${BASE_URL}/login.html`;
+                    return;
+                }
                 
-                // Mimamori-Typen abrufen
-                await fetchMimamoriTypes();
+                // Mimamori-Daten laden
+                await loadMimamoriData();
                 
-                // Event-Listener hinzufügen
-                feedButton.addEventListener('click', feedMimamori);
+                // Periodisches Update alle 5 Minuten
+                setInterval(loadMimamoriData, 5 * 60 * 1000);
                 
-                // Periodische Aktualisierung einrichten
-                setupPeriodicUpdate();
-                
-                hideLoading();
             } catch (error) {
-                console.error('Fehler beim Initialisieren der Seite:', error);
-                hideLoading();
-                alert('Es ist ein Fehler aufgetreten. Bitte versuche es später noch einmal.');
+                console.error('Init error:', error);
+                showStatus('Fehler beim Laden. Bitte neu laden.', 'error');
             }
         }
 
-        // Setup der periodischen Aktualisierung der Zufriedenheit während der Session
-        function setupPeriodicUpdate() {
-            // Alle 10 Minuten prüfen, ob die Zufriedenheit aktualisiert werden muss
-            updateInterval = setInterval(checkHappinessUpdate, 10 * 60 * 1000);
-            
-            // Auch bei Sichtbarkeitsänderungen (Tab-Wechsel, etc.)
-            document.addEventListener('visibilitychange', function() {
-                if (document.visibilityState === 'visible') {
-                    checkHappinessUpdate();
-                }
-            });
-        }
-
-        // Prüft, ob die Zufriedenheit aktualisiert werden muss
-        async function checkHappinessUpdate() {
-            if (!currentMimamori) return;
-            
+        // Mimamori-Daten laden
+        async function loadMimamoriData() {
             try {
-                const response = await fetch(`${BASE_URL}/api/mimamori.php?action=update_happiness`, {
+                const response = await fetch(`${BASE_URL}/api/mimamori.php?action=get`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
                 
                 if (data.status === 'success') {
-                    // Nur aktualisieren, wenn sich etwas geändert hat
-                    if (data.mimamori.happiness_level !== currentMimamori.happiness_level) {
-                        currentMimamori = data.mimamori;
-                        updateMimamoriDisplay();
-                        
-                        // Status anzeigen
-                        statusIndicator.textContent = 'Zufriedenheit wurde aktualisiert.';
-                        setTimeout(() => {
-                            statusIndicator.textContent = '';
-                        }, 3000);
-                    }
-                }
-            } catch (error) {
-                console.error('Fehler bei der periodischen Aktualisierung:', error);
-            }
-        }
-
-        async function fetchMimamoriData() {
-            const response = await fetch(`${BASE_URL}/api/mimamori.php?action=get`, {
-                credentials: 'include'
-            });
-            const data = await response.json();
-            
-            if (data.status === 'success') {
-                currentMimamori = data.mimamori;
-                foodItems = data.foodItems;
-                
-                // UI aktualisieren
-                updateMimamoriDisplay();
-                createFoodOptions();
-            } else {
-                throw new Error(data.message || 'Unbekannter Fehler');
-            }
-        }
-
-        async function fetchMimamoriTypes() {
-            const response = await fetch(`${BASE_URL}/api/mimamori.php?action=types`, {
-                credentials: 'include'
-            });
-            const data = await response.json();
-            
-            if (data.status === 'success') {
-                mimamoriTypes = data.types;
-                createTypeButtons();
-            } else {
-                throw new Error(data.message || 'Unbekannter Fehler');
-            }
-        }
-
-        function updateMimamoriDisplay() {
-            if (!currentMimamori) return;
-            
-            // Zufriedenheitsmeter aktualisieren (0-100%)
-            const happinessPercent = (currentMimamori.happiness_level / 10) * 100;
-            happinessLevel.style.width = happinessPercent + '%';
-            
-            // Farben des Mimamori aktualisieren
-            const primaryColor = currentMimamori.color_primary;
-            
-            // Grundfarbe des Charakters ändern
-            character.style.backgroundColor = primaryColor;
-            
-            // Gesichtsausdruck aktualisieren
-            updateMood();
-        }
-
-        function updateMood() {
-            const level = currentMimamori.happiness_level;
-            
-            // Gesichtsausdruck basierend auf der Zufriedenheit
-            if (level >= 8) {
-                // Sehr glücklich
-                mouth.style.transform = 'rotate(0deg)';
-                mouth.style.borderRadius = '0 0 40px 40px';
-            } else if (level >= 5) {
-                // Glücklich
-                mouth.style.transform = 'rotate(0deg)';
-                mouth.style.borderRadius = '0 0 40px 40px';
-                mouth.style.height = '30px';
-            } else if (level >= 3) {
-                // Neutral
-                mouth.style.transform = 'rotate(0deg)';
-                mouth.style.borderRadius = '0';
-                mouth.style.height = '10px';
-            } else {
-                // Traurig
-                mouth.style.transform = 'rotate(180deg)';
-                mouth.style.borderRadius = '0 0 40px 40px';
-                mouth.style.height = '40px';
-            }
-        }
-
-        function createFoodOptions() {
-            foodOptions.innerHTML = '';
-            
-            foodItems.forEach(food => {
-                const foodItem = document.createElement('div');
-                foodItem.classList.add('food-item');
-                foodItem.setAttribute('data-id', food.id);
-                foodItem.setAttribute('data-value', food.happiness_value);
-                
-                const foodInner = document.createElement('div');
-                foodInner.classList.add('food-item-inner');
-                
-                const foodImage = document.createElement('div');
-                foodImage.classList.add(food.image_class);
-                
-                foodInner.appendChild(foodImage);
-                foodItem.appendChild(foodInner);
-                foodOptions.appendChild(foodItem);
-                
-                // Event-Listener für Nahrungsauswahl
-                foodItem.addEventListener('click', () => selectFood(foodItem));
-            });
-        }
-
-        function createTypeButtons() {
-            typeButtons.innerHTML = '';
-            
-            mimamoriTypes.forEach(type => {
-                const button = document.createElement('button');
-                button.classList.add('type-button');
-                button.classList.add(type.name.toLowerCase());
-                button.setAttribute('data-id', type.id);
-                button.textContent = type.name;
-                
-                // Aktuellen Typ markieren
-                if (currentMimamori && currentMimamori.mimamori_type_id == type.id) {
-                    button.classList.add('selected');
-                }
-                
-                // Event-Listener für Typauswahl
-                button.addEventListener('click', () => changeMimamoriType(type.id));
-                
-                typeButtons.appendChild(button);
-            });
-        }
-
-        function selectFood(item) {
-            // Vorherige Auswahl zurücksetzen
-            document.querySelectorAll('.food-item').forEach(item => {
-                item.classList.remove('selected');
-            });
-            
-            // Neue Auswahl markieren
-            item.classList.add('selected');
-            selectedFood = item;
-        }
-
-        async function feedMimamori() {
-            if (!selectedFood) {
-                alert('Bitte wähle zuerst ein Essen aus!');
-                return;
-            }
-
-            try {
-                showLoading();
-                
-                // Animation hinzufügen
-                character.classList.add('bounce');
-                
-                // Füttern-API aufrufen
-                const formData = new FormData();
-                formData.append('food_id', selectedFood.getAttribute('data-id'));
-                
-                const response = await fetch(`${BASE_URL}/api/mimamori.php?action=feed`, {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'include'
-                });
-                
-                const data = await response.json();
-                
-                if (data.status === 'success') {
-                    // Daten aktualisieren
                     currentMimamori = data.mimamori;
-                    updateMimamoriDisplay();
-                    
-                    // Animation zurücksetzen
-                    setTimeout(() => {
-                        character.classList.remove('bounce');
-                    }, 1000);
-                    
-                    // Auswahl zurücksetzen
-                    selectedFood.classList.remove('selected');
-                    selectedFood = null;
-                    
-                    // Erfolg anzeigen, wenn maximale Zufriedenheit erreicht
-                    if (currentMimamori.happiness_level >= 8) {
-                        modal.style.display = 'block';
-                    }
-                    
-                    // Status anzeigen
-                    statusIndicator.textContent = 'Mimamori wurde gefüttert. Zufriedenheit: ' + currentMimamori.happiness_level + '/10';
-                    setTimeout(() => {
-                        statusIndicator.textContent = '';
-                    }, 3000);
-                } else {
-                    throw new Error(data.message || 'Unbekannter Fehler');
+                    updateDisplay();
                 }
-                
-                hideLoading();
             } catch (error) {
-                console.error('Fehler beim Füttern:', error);
-                hideLoading();
-                alert('Es ist ein Fehler aufgetreten. Bitte versuche es später noch einmal.');
+                console.error('Load error:', error);
             }
         }
 
-        async function changeMimamoriType(typeId) {
+        // Display aktualisieren
+        function updateDisplay() {
+            if (!currentMimamori) return;
+            
+            console.log('Current happiness level:', currentMimamori.happiness_level);
+            
+            // Zufriedenheitsbalken
+            const percent = (currentMimamori.happiness_level / 10) * 100;
+            document.getElementById('happinessFill').style.width = percent + '%';
+            
+            // Gesichtsausdruck mit drei Stufen
+            const mouth = document.getElementById('mimamoriMouth');
+            mouth.classList.remove('sad', 'neutral', 'happy');
+            
+            if (currentMimamori.happiness_level <= 3) {
+                mouth.classList.add('sad');
+            } else if (currentMimamori.happiness_level <= 6) {
+                mouth.classList.add('neutral');
+            } else {
+                mouth.classList.add('happy');
+            }
+            
+            // Mimamori-Typ anzeigen
+            const typeName = Object.keys(mimamoriTypes).find(
+                key => mimamoriTypes[key] === currentMimamori.mimamori_type_id
+            );
+            if (typeName) {
+                updateCharacterType(typeName);
+            }
+            
+            // Füttern-Button deaktivieren wenn Zufriedenheit max (10)
+            const feedButton = document.getElementById('feedButton');
+            if (currentMimamori.happiness_level >= 10) {
+                feedButton.disabled = true;
+                feedButton.innerHTML = 'Satt & Glücklich 😊';
+            } else {
+                feedButton.disabled = false;
+                feedButton.innerHTML = 'Füttern';
+            }
+        }
+
+        // Character-Typ aktualisieren
+        function updateCharacterType(name) {
+            const character = document.getElementById('mimamoriCharacter');
+            const sadIcon = document.getElementById('sadIcon');
+            const happyIcon = document.getElementById('happyIcon');
+            
+            // Klassen aktualisieren
+            character.classList.remove('leni', 'alva', 'bodo', 'thor');
+            character.classList.add(name);
+            
+            sadIcon.classList.remove('leni', 'alva', 'bodo', 'thor');
+            happyIcon.classList.remove('leni', 'alva', 'bodo', 'thor');
+            sadIcon.classList.add(name);
+            happyIcon.classList.add(name);
+            
+            // Titel aktualisieren
+            const title = document.getElementById('mimamoriTitle');
+            const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+            title.textContent = capitalizedName + ' Füttern';
+        }
+
+        // Toggle Menu
+        function toggleMenu() {
+            const button = document.querySelector('.burger-button');
+            const menu = document.getElementById('dropdownMenu');
+            
+            button.classList.toggle('active');
+            menu.classList.toggle('show');
+        }
+
+        // Mimamori auswählen
+        async function selectMimamori(name, typeId) {
+            if (isLoading) return;
+            
             try {
-                showLoading();
+                isLoading = true;
                 
-                // Typ-Änderungs-API aufrufen
+                // UI sofort aktualisieren
+                updateCharacterType(name);
+                
+                // Update selected state in menu
+                const options = document.querySelectorAll('.mimamori-option');
+                options.forEach(option => option.classList.remove('selected'));
+                event.target.closest('.mimamori-option').classList.add('selected');
+                
+                // Close menu
+                toggleMenu();
+                
+                // Server-Update
                 const formData = new FormData();
                 formData.append('type_id', typeId);
                 
@@ -768,85 +1177,142 @@
                 });
                 
                 const data = await response.json();
-                
                 if (data.status === 'success') {
-                    // Daten aktualisieren
-                    currentMimamori = data.mimamori;
-                    
-                    // UI aktualisieren
-                    updateMimamoriDisplay();
-                    
-                    // Typ-Buttons aktualisieren
-                    document.querySelectorAll('.type-button').forEach(button => {
-                        button.classList.remove('selected');
-                        if (button.getAttribute('data-id') == typeId) {
-                            button.classList.add('selected');
-                        }
-                    });
-                    
-                    // Status anzeigen
-                    statusIndicator.textContent = 'Mimamori-Typ wurde geändert auf: ' + currentMimamori.type_name;
-                    setTimeout(() => {
-                        statusIndicator.textContent = '';
-                    }, 3000);
-                } else {
-                    throw new Error(data.message || 'Unbekannter Fehler');
+                    // NUR den Typ aktualisieren, NICHT den ganzen Mimamori-Zustand
+                    currentMimamori.mimamori_type_id = typeId;
+                    // Kein updateDisplay() hier, da wir die Zufriedenheit nicht ändern wollen!
+                    showStatus('Mimamori-Typ geändert!', 'success');
                 }
                 
-                hideLoading();
             } catch (error) {
-                console.error('Fehler beim Ändern des Typs:', error);
-                hideLoading();
-                alert('Es ist ein Fehler aufgetreten. Bitte versuche es später noch einmal.');
+                console.error('Type change error:', error);
+                showStatus('Fehler beim Ändern des Typs', 'error');
+            } finally {
+                isLoading = false;
             }
         }
 
-        function showLoading() {
-            loading.style.display = 'flex';
+        // Essen auswählen
+        function selectFood(element) {
+            // Remove previous selection
+            const foods = document.querySelectorAll('.food-badge');
+            foods.forEach(food => food.classList.remove('selected'));
+            
+            // Add selection to clicked element
+            element.classList.add('selected');
+            selectedFoodElement = element;
+            selectedFoodId = element.getAttribute('data-food-id');
         }
 
-        function hideLoading() {
-            loading.style.display = 'none';
+        // Mimamori füttern
+        async function feedMimamori() {
+            // Check if already at max happiness
+            if (currentMimamori && currentMimamori.happiness_level >= 10) {
+                showStatus('Mimamori ist bereits satt und glücklich!', 'success');
+                return;
+            }
+            
+            if (!selectedFoodId) {
+                showStatus('Bitte wähle zuerst ein Essen aus!', 'error');
+                return;
+            }
+            
+            if (isLoading) return;
+            
+            const feedButton = document.getElementById('feedButton');
+            
+            try {
+                isLoading = true;
+                feedButton.disabled = true;
+                feedButton.innerHTML = 'Füttere...<span class="loading"></span>';
+                
+                // Animation
+                const character = document.getElementById('mimamoriCharacter');
+                character.classList.add('feeding');
+                
+                // Server-Request
+                const formData = new FormData();
+                formData.append('food_id', selectedFoodId);
+                
+                const response = await fetch(`${BASE_URL}/api/mimamori.php?action=feed`, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    currentMimamori = data.mimamori;
+                    updateDisplay();
+                    
+                    // Reset selection
+                    if (selectedFoodElement) {
+                        selectedFoodElement.classList.remove('selected');
+                    }
+                    selectedFoodElement = null;
+                    selectedFoodId = null;
+                    
+                    showStatus('Lecker! Mimamori ist zufriedener!', 'success');
+                } else {
+                    showStatus(data.message || 'Fehler beim Füttern', 'error');
+                }
+                
+            } catch (error) {
+                console.error('Feed error:', error);
+                showStatus('Fehler beim Füttern', 'error');
+            } finally {
+                isLoading = false;
+                feedButton.disabled = false;
+                feedButton.innerHTML = 'Füttern';
+                
+                // Remove animation
+                setTimeout(() => {
+                    document.getElementById('mimamoriCharacter').classList.remove('feeding');
+                }, 600);
+            }
         }
 
-        // Event-Listener für das Beenden der Seite (Bereinigung)
-        window.addEventListener('beforeunload', function() {
-            if (updateInterval) {
-                clearInterval(updateInterval);
+        // Logout
+        async function logout() {
+            if (confirm('Möchten Sie sich wirklich abmelden?')) {
+                try {
+                    await fetch(`${BASE_URL}/api/logout.php`, {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+                    window.location.href = `${BASE_URL}/login.html`;
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    window.location.href = `${BASE_URL}/login.html`;
+                }
+            }
+        }
+
+        // Status-Nachricht anzeigen
+        function showStatus(message, type = 'success') {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.textContent = message;
+            statusMessage.style.background = type === 'error' ? '#f44336' : '#4CAF50';
+            statusMessage.classList.add('show');
+            
+            setTimeout(() => {
+                statusMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.querySelector('.burger-menu');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            
+            if (!menu.contains(event.target) && dropdownMenu.classList.contains('show')) {
+                toggleMenu();
             }
         });
 
-        // Hilfsfunktion zum Anpassen der Helligkeit einer Farbe
-        function adjustBrightness(hex, percent) {
-            hex = hex.replace(/^\s*#|\s*$/g, '');
-            
-            // 3 Zeichen in 6 umwandeln
-            if(hex.length == 3) {
-                hex = hex.replace(/(.)/g, '$1$1');
-            }
-            
-            // Farben in Dezimalzahlen umwandeln
-            var r = parseInt(hex.substr(0, 2), 16);
-            var g = parseInt(hex.substr(2, 2), 16);
-            var b = parseInt(hex.substr(4, 2), 16);
-            
-            // Helligkeit anpassen
-            r = parseInt(r * (100 + percent) / 100);
-            g = parseInt(g * (100 + percent) / 100);
-            b = parseInt(b * (100 + percent) / 100);
-            
-            // Dezimalzahlen begrenzen
-            r = (r < 0) ? 0 : (r > 255) ? 255 : r;
-            g = (g < 0) ? 0 : (g > 255) ? 255 : g;
-            b = (b < 0) ? 0 : (b > 255) ? 255 : b;
-            
-            // Zurück in Hex umwandeln
-            var rr = ((r.toString(16).length == 1) ? "0" + r.toString(16) : r.toString(16));
-            var gg = ((g.toString(16).length == 1) ? "0" + g.toString(16) : g.toString(16));
-            var bb = ((b.toString(16).length == 1) ? "0" + b.toString(16) : b.toString(16));
-            
-            return "#" + rr + gg + bb;
-        }
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
